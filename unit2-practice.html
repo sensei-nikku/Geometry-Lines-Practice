@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 Practice — Days 1&ndash;3</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F4F1EC;--surface:#FFF;--border:#D6D0C4;--text:#2C2A26;--muted:#7A756B;--accent:#1B6B93;--accent-lt:#E8F1F5;--ok:#3A7D44;--ok-lt:#E6F2E8;--warn:#C4841D;--warn-lt:#FDF3E4;--err:#B33A3A;--err-lt:#FBEAEA;--navy:#1A2332}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.hdr{background:var(--navy);color:#E8E4DD;padding:13px 18px;position:sticky;top:0;z-index:200}
+.hdr h1{font-size:1rem;font-weight:600}
+.hdr .sub{font-size:.7rem;color:#8A9BB0;margin-top:1px}
+.tabs{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.tab{padding:7px 12px;min-height:34px;border-radius:7px;border:1.5px solid #3A4556;background:transparent;color:#7C8A9E;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab .n{font-family:'JetBrains Mono',monospace;font-size:.67rem;opacity:.75;margin-left:5px}
+.progress-bar{height:4px;background:#2A3344;border-radius:2px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;background:var(--ok);width:0;transition:width .35s}
+.pills{display:flex;gap:4px;margin-top:9px;flex-wrap:wrap}
+.pill{min-width:36px;min-height:34px;padding:4px 7px;border-radius:6px;border:1.5px solid #3A4556;background:transparent;color:#6E7C90;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.pill.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.pill.helped{background:var(--warn);border-color:var(--warn);color:#fff}
+.pill[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.qnav{display:flex;gap:9px;align-items:center;justify-content:space-between;margin-top:15px;flex-wrap:wrap}
+.qpos{font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--muted)}
+.counts{margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#8A9BB0}
+.counts b{color:#E8E4DD;font-weight:500}
+.main{max-width:660px;margin:0 auto;padding:16px 16px 90px}
+.intro{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:.87rem;color:var(--muted)}
+.intro strong{color:var(--text)}
+.sec{margin:20px 0 11px;padding:10px 16px;background:var(--navy);color:#E8E4DD;border-radius:10px}
+.sec h2{font-size:.88rem;font-weight:600}
+.sec p{font-size:.71rem;color:#8A9BB0;margin-top:2px}
+.q{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:17px 19px;margin-bottom:11px}
+.q.solved{background:var(--ok-lt);border-color:var(--ok)}
+.q.helped{background:var(--warn-lt);border-color:var(--warn)}
+.qtop{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.qn{font-family:'JetBrains Mono',monospace;font-size:.69rem;font-weight:600;color:var(--accent);letter-spacing:.06em}
+.qtag{font-family:'JetBrains Mono',monospace;font-size:.59rem;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:4px;background:#EFEDE8;color:var(--muted)}
+.qtag.cx{background:var(--warn-lt);color:var(--warn)}
+.qtext{font-size:.96rem;line-height:1.5;margin-bottom:10px}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.95em}
+.fig{text-align:center;margin:4px 0 10px}
+.fig svg{max-width:100%;height:auto}
+.step{margin-bottom:15px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.opt[disabled],.btn[disabled],input[disabled]{cursor:not-allowed}
+.setup{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px}
+.setup h2{font-size:1.02rem;margin-bottom:4px}
+.setup > p{font-size:.88rem;color:var(--muted);margin-bottom:16px}
+.grp{margin-bottom:17px}
+.grp-label{font-size:.71rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;display:flex;align-items:center;padding:8px 15px;border:2px solid var(--border);border-radius:8px;background:var(--surface);font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--text);cursor:pointer;touch-action:manipulation}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-lt);font-weight:600}
+.chip .n{font-family:'JetBrains Mono',monospace;font-size:.71rem;color:var(--muted);margin-left:7px}
+.setupnote{font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.slabel{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.opts{display:flex;flex-direction:column;gap:6px;max-width:410px}
+.opt{min-height:44px;display:flex;align-items:center;text-align:left;width:100%;padding:9px 15px;border:2px solid var(--border);border-radius:8px;background:var(--surface);font-family:'DM Sans',sans-serif;font-size:.89rem;color:var(--text);cursor:pointer;touch-action:manipulation}
+.opt:hover{border-color:var(--accent);background:var(--accent-lt)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-lt);font-weight:600}
+.locked-in{min-height:42px;display:flex;align-items:center;gap:8px;padding:9px 15px;border:2px solid var(--ok);border-radius:8px;background:var(--ok-lt);font-size:.89rem;font-weight:600;max-width:410px}
+.locked-in .tick{color:var(--ok)}
+.fields{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fld{display:flex;align-items:center;gap:6px}
+.fld label{font-size:.88rem;color:var(--muted)}
+input[type=text]{font-family:'JetBrains Mono',monospace;font-size:1rem;min-height:44px;width:120px;padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#145A7A}
+.btn-nudge{background:transparent;color:var(--warn);border:2px solid var(--warn);min-height:40px;padding:8px 14px;font-size:.82rem}
+.btn-nudge:hover{background:var(--warn-lt)}
+.btn-open{background:var(--warn);color:#fff;min-height:40px;padding:8px 14px;font-size:.82rem}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:11px}
+.fb{padding:9px 13px;border-radius:8px;font-size:.87rem;margin-top:10px;line-height:1.5}
+.fb.ok{background:var(--ok-lt);color:var(--ok);border:1px solid var(--ok)}
+.fb.err{background:var(--err-lt);color:var(--err);border:1px solid var(--err)}
+.fb.nudge{background:var(--warn-lt);color:#8A5A0F;border:1px solid var(--warn)}
+.done{text-align:center;padding:24px 18px;background:var(--ok-lt);border:1px solid var(--ok);border-radius:12px;margin-top:12px}
+.done h2{font-size:1.02rem;color:var(--ok);margin-bottom:5px}
+.done p{font-size:.88rem}
+
+/* ---------- toolbelt ---------- */
+.belt{position:fixed;left:0;right:0;bottom:0;z-index:300;background:var(--navy);border-top:2px solid #2A3344}
+.beltbar{display:flex;gap:5px;padding:7px 12px;align-items:center;flex-wrap:wrap;max-width:660px;margin:0 auto}
+.beltbar .lbl{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#6E7C90;text-transform:uppercase;letter-spacing:.09em;margin-right:4px}
+.tbtn{min-height:40px;padding:7px 13px;border-radius:7px;border:1.5px solid #3A4556;background:transparent;color:#9AA8BA;font-family:'DM Sans',sans-serif;font-size:.79rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.tbtn:hover{border-color:#8A9BB0;color:#D8E0EA}
+.tbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.beltpanel{background:var(--surface);border-top:1px solid var(--border);max-height:46vh;overflow-y:auto}
+.beltinner{max-width:660px;margin:0 auto;padding:16px 16px 20px}
+.beltinner h3{font-size:.83rem;margin-bottom:8px}
+.beltinner table{border-collapse:collapse;width:100%;font-size:.8rem;margin-bottom:8px}
+.beltinner th,.beltinner td{border:1px solid var(--border);padding:6px 9px;text-align:left;vertical-align:top}
+.beltinner th{background:#F1EEE9;font-weight:600;font-size:.75rem}
+.beltinner p{font-size:.83rem;color:var(--muted);margin-bottom:7px}
+.beltinner .fig{margin:2px 0 10px}
+
+/* calculator */
+.calc{max-width:330px;margin:0 auto}
+.calcout{background:#F8F6F3;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:9px;text-align:right}
+.calcexp{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);min-height:1.1em;word-break:break-all}
+.calcval{font-family:'JetBrains Mono',monospace;font-size:1.45rem;font-weight:500;word-break:break-all}
+.calcfrac{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);min-height:1.1em}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.key{min-height:46px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:'JetBrains Mono',monospace;font-size:1.02rem;font-weight:500;cursor:pointer;touch-action:manipulation;color:var(--text)}
+.key:hover{background:var(--accent-lt);border-color:var(--accent)}
+.key.op{background:#F1EEE9}
+.key.eq{background:var(--accent);color:#fff;border-color:var(--accent)}
+.key.clr{background:var(--err-lt);color:var(--err);border-color:#E4BFBF}
+.calcnote{font-size:.74rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.45}
+noscript .ns{background:var(--warn-lt);border:1px solid var(--warn);border-radius:10px;padding:16px;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <h1>Unit 2 Practice &mdash; Days 1&ndash;3</h1>
+  <div class="sub">Geometry 1 &middot; Transversals, Slope, Point-Slope &middot; Practice Day</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="pills" id="pills" role="group" aria-label="Problems in this section"></div>
+  <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+  <div class="counts" id="counts"></div>
+</header>
+
+<noscript><div class="main"><div class="ns"><strong>This page needs JavaScript.</strong> Work the problems on your whiteboard and bring them over instead.</div></div></noscript>
+
+<div class="sr" id="live" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="main" id="main"></div>
+
+<div class="belt">
+  <div class="beltpanel" id="beltpanel" style="display:none"><div class="beltinner" id="beltinner"></div></div>
+  <div class="beltbar" id="beltbar"></div>
+</div>
+
+<script>
+/* ============================================================
+   Unit 2 Days 1-3 practice, step-locked.
+   Every answer -- final and intermediate -- is computed at run time
+   from the figure and coordinate structure. No answer literals.
+   Exact rational arithmetic throughout. No browser storage.
+   ============================================================ */
+
+/* ---------- exact rationals ---------- */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a||1;}
+function fr(n,d){d=(d===undefined?1:d);if(d<0){n=-n;d=-d;}var g=gcd(n,d);return {n:n/g,d:d/g};}
+function fadd(a,b){return fr(a.n*b.d+b.n*a.d,a.d*b.d);}
+function fmul(a,b){return fr(a.n*b.n,a.d*b.d);}
+function fneg(a){return fr(-a.n,a.d);}
+function feq(a,b){return !!a&&!!b&&a.n*b.d===b.n*a.d;}
+function fstr(a){return a.d===1?String(a.n):(a.n+'/'+a.d);}
+function ftex(a){return a.d===1?neg(a.n):neg(a.n)+'&#47;'+a.d;}
+function neg(v){return String(v).replace('-','&minus;');}
+function signed(f){return f.n<0?' &minus; '+ftex(fr(-f.n,f.d)):' + '+ftex(f);}
+function ainv(v){var w=-v;return w<0?('(&minus;'+Math.abs(w)+')'):String(w);}
+/* Restating the arithmetic is the point of a level-2 nudge -- but when one
+   operand is 0 the restatement IS the answer, so point at the idea instead. */
+function diffAsk(second,first,axis){
+  if(first===0) return 'The first '+axis+'-value is 0, and adding the additive inverse of 0 changes nothing. So which of the two '+axis+'-values is the change in '+axis+'?';
+  return 'What is '+neg(second)+' + '+ainv(first)+'?';
+}
+
+/* ---------- transversal model ----------
+   upper: 2|1 above, 3|4 below.  lower: 6|5 above, 7|8 below.
+   odd angles congruent; even angles congruent; odd + even = 180 */
+function reg(n){return {upper:n<=4,interior:(n===3||n===4||n===5||n===6),left:(n===2||n===3||n===6||n===7)};}
+function pairType(a,b){
+  var ra=reg(a),rb=reg(b);
+  if(ra.upper===rb.upper) return 'same';
+  var ss=(ra.left===rb.left);
+  if(ra.interior&&rb.interior) return ss?'ssi':'ai';
+  if(!ra.interior&&!rb.interior) return ss?'sse':'ae';
+  return ss?'corr':'none';
+}
+function locOf(a,b){var ra=reg(a),rb=reg(b);
+  if(ra.interior&&rb.interior) return 'both_int';
+  if(!ra.interior&&!rb.interior) return 'both_ext';
+  return 'mixed';}
+function sideOf(a,b){return reg(a).left===reg(b).left?'same':'opp';}
+function ruleOf(t){return (t==='ssi'||t==='sse')?'supp':'eq';}
+function allEight(n,v){var odd=(n%2?v:180-v),r={};for(var i=1;i<=8;i++)r[i]=(i%2?odd:180-odd);return r;}
+function relate(a,b){
+  var t=pairType(a,b);
+  if(TYPE_NAME[t]) return {name:TYPE_NAME[t].toLowerCase(),cong:ruleOf(t)==='eq'};
+  var same=(a%2)===(b%2);
+  return {name:same?('both '+(a%2?'odd':'even')+'-numbered'):'one odd-numbered and one even-numbered',cong:same};
+}
+var TYPE_NAME={corr:'Corresponding',ai:'Alternate interior',ae:'Alternate exterior',ssi:'Same-side interior'};
+var TYPE_ORDER=['corr','ai','ae','ssi'];
+
+/* ---------- coordinates ---------- */
+function slopeOf(p,q){var dx=q[0]-p[0];return dx===0?null:fr(q[1]-p[1],dx);}
+function bOf(m,p){return fadd(fr(p[1]),fneg(fmul(m,fr(p[0]))));}
+
+/* ---------- figure ---------- */
+var C='#2C2A26',MUT='#7A756B',ACC='#1B6B93',FF='font-family="DM Sans, sans-serif"';
+var UY=55,LY=140,LX=110;
+function txAt(y){return LX+45*(LY-y)/85;}
+var NUMPOS={1:[173,42],2:[137,42],3:[131,72],4:[162,74],5:[134,125],6:[92,127],7:[85,158],8:[127,160]};
+var EXPPOS={1:[170,44,'start'],2:[146,44,'end'],3:[140,73,'end'],4:[150,75,'start'],
+            5:[124,126,'start'],6:[111,128,'end'],7:[96,159,'end'],8:[105,160,'start']};
+function figure(hi,labels,w){
+  hi=hi||[];labels=labels||{};
+  var s='<svg viewBox="-16 0 296 190" width="'+(w||280)+'" role="img" aria-label="Two parallel lines cut by a transversal, angles 1 to 8" xmlns="http://www.w3.org/2000/svg">';
+  s+='<line x1="15" y1="'+UY+'" x2="248" y2="'+UY+'" stroke="'+C+'" stroke-width="2"/>';
+  s+='<line x1="15" y1="'+LY+'" x2="248" y2="'+LY+'" stroke="'+C+'" stroke-width="2"/>';
+  s+='<path d="M 26,'+(UY-7)+' L 36,'+UY+' L 26,'+(UY+7)+'" fill="none" stroke="'+C+'" stroke-width="2"/>';
+  s+='<path d="M 26,'+(LY-7)+' L 36,'+LY+' L 26,'+(LY+7)+'" fill="none" stroke="'+C+'" stroke-width="2"/>';
+  s+='<line x1="'+txAt(175).toFixed(1)+'" y1="175" x2="'+txAt(20).toFixed(1)+'" y2="20" stroke="'+ACC+'" stroke-width="2"/>';
+  s+='<text x="258" y="'+(UY+4)+'" font-size="13" font-style="italic" '+FF+' fill="'+MUT+'">\u2113</text>';
+  s+='<text x="258" y="'+(LY+4)+'" font-size="13" font-style="italic" '+FF+' fill="'+MUT+'">m</text>';
+  s+='<text x="'+(txAt(20)+6).toFixed(1)+'" y="20" font-size="13" font-style="italic" '+FF+' fill="'+ACC+'">t</text>';
+  for(var n=1;n<=8;n++){
+    var on=hi.indexOf(n)>=0,lab=labels[n];
+    if(lab){var e=EXPPOS[n];
+      s+='<text x="'+e[0]+'" y="'+e[1]+'" text-anchor="'+e[2]+'" font-size="11.5" '+FF+' fill="'+(on?ACC:C)+'" font-weight="'+(on?'700':'500')+'">\u2220'+n+' = '+lab+'</text>';
+    }else{var q=NUMPOS[n];
+      if(on) s+='<circle cx="'+q[0]+'" cy="'+(q[1]-4)+'" r="9" fill="'+ACC+'"/>';
+      s+='<text x="'+q[0]+'" y="'+q[1]+'" text-anchor="middle" font-size="12.5" '+FF+' fill="'+(on?'#fff':MUT)+'" font-weight="'+(on?'700':'400')+'">'+n+'</text>';
+    }
+  }
+  return s+'</svg>';
+}
+function exprStr(e){
+  var s='('+(e[0]===1?'':(e[0]===-1?'&minus;':e[0]))+'x';
+  if(e[1]>0)s+=' + '+e[1];else if(e[1]<0)s+=' &minus; '+Math.abs(e[1]);
+  return s+')&deg;';
+}
+function pt(p){return '('+neg(p[0])+', '+neg(p[1])+')';}
+
+/* ============================================================
+   PROBLEMS -- structure only
+   ============================================================ */
+var SECTIONS=[
+  {id:'d1',label:'Day 1',title:'Transversals & Angle Relationships',blurb:'Locate the pair, choose the rule, then solve. The angle-pair table is in the toolbelt.'},
+  {id:'d2',label:'Day 2',title:'Slope & Graphing',blurb:'Change in y on top. The horizontal and the vertical case both show up here.'},
+  {id:'d3',label:'Day 3',title:'Writing Equations',blurb:'Substitute exactly, then simplify. The form reference is in the toolbelt.'},
+  {id:'mx',label:'Mixed',title:'Mixed Review',blurb:'No labels. Working out which tool to reach for is the whole point of this section.'}
+];
+var PROBS=[
+  {s:'d1',cx:0,k:'pair',pair:[2,6]},
+  {s:'d1',cx:0,k:'pair',pair:[4,5]},
+  {s:'d1',cx:0,k:'angle',given:[1,105],ask:5},
+  {s:'d1',cx:1,k:'angle',given:[3,68],ask:6},
+  {s:'d1',cx:1,k:'algx',pair:[2,6],expr:[[4,10],[6,-18]]},
+  {s:'d1',cx:1,k:'algx',pair:[4,5],expr:[[3,20],[2,35]]},
+  {s:'d1',cx:1,k:'algang',pair:[1,7],expr:[[7,-9],[5,15]],ask:1},
+  {s:'d1',cx:2,k:'algang',pair:[3,5],expr:[[9,4],[11,-16]],ask:8},
+
+  {s:'d2',cx:0,k:'slope2',p:[1,2],q:[5,10]},
+  {s:'d2',cx:0,k:'slope2',p:[-3,4],q:[1,-4]},
+  {s:'d2',cx:1,k:'slope2',p:[2,7],q:[9,7]},
+  {s:'d2',cx:1,k:'sltype',p:[-5,1],q:[-5,6]},
+  {s:'d2',cx:1,k:'slope2',p:[-6,3],q:[4,-2]},
+  {s:'d2',cx:1,k:'readmb',m:[-3,5],b:[7,1],form:'y = &minus;(3&#47;5)x + 7'},
+  {s:'d2',cx:1,k:'step',start:[0,-4],m:[5,2]},
+  {s:'d2',cx:2,k:'missing',p:[-2,5],qx:6,m:[3,4],letter:'y'},
+
+  {s:'d3',cx:0,k:'ptmb',p:[3,4],m:[2,1]},
+  {s:'d3',cx:0,k:'ptmb',p:[-1,6],m:[-3,1]},
+  {s:'d3',cx:1,k:'ptmb',p:[5,-2],m:[1,5]},
+  {s:'d3',cx:1,k:'ptmb',p:[-4,-7],m:[2,1]},
+  {s:'d3',cx:1,k:'twomb',p:[2,9],q:[6,1]},
+  {s:'d3',cx:1,k:'twomb',p:[-3,-1],q:[3,7]},
+  {s:'d3',cx:1,k:'convert',p:[-2,8],m:[3,1]},
+  {s:'d3',cx:2,k:'ptmb',p:[1,-3],m:[-5,2]},
+
+  {s:'mx',cx:0,k:'pair',pair:[1,7]},
+  {s:'mx',cx:0,k:'slope2',p:[0,-6],q:[4,2]},
+  {s:'mx',cx:1,k:'angle',given:[6,73],ask:3},
+  {s:'mx',cx:1,k:'readmb',m:[-2,3],b:[4,1],form:'y = 4 &minus; (2&#47;3)x'},
+  {s:'mx',cx:1,k:'ptmb',p:[2,-1],m:[4,1]},
+  {s:'mx',cx:2,k:'missing',p:[-2,1],qx:4,m:[-1,2],letter:'k'}
+];
+PROBS.forEach(function(p,i){p.id='q'+i;p.num='P-'+(i+1);});
+
+/* ============================================================
+   STEPS -- built at run time, answers derived
+   ============================================================ */
+var LOC_OPTS=[{v:'both_int',t:'Both are between the lines'},{v:'both_ext',t:'Both are outside the lines'},{v:'mixed',t:'One inside, one outside'}];
+var SIDE_OPTS=[{v:'same',t:'Same side of the transversal'},{v:'opp',t:'Opposite sides of the transversal'}];
+var NAME_OPTS=TYPE_ORDER.map(function(k){return {v:k,t:TYPE_NAME[k]};});
+var RULE_OPTS=[{v:'eq',t:'Congruent &mdash; set them equal'},{v:'supp',t:'Supplementary &mdash; sum to 180'}];
+var SLT_OPTS=[{v:'pos',t:'Positive'},{v:'neg',t:'Negative'},{v:'zero',t:'Zero'},{v:'undef',t:'Undefined'}];
+
+function steps(p){
+  var S=[],t,rule,e1,e2,x,v1,eight,m,b,dy,dx,rise,run,land,yv;
+  function C(id,label,opts,ans,n1,n2){S.push({id:id,kind:'choice',label:label,opts:opts,ans:ans,nudge:n1,nudge2:n2||n1});}
+  function N(id,label,ans,n1,n2,unit){S.push({id:id,kind:'num',label:label,ans:ans,nudge:n1,nudge2:n2||n1,unit:unit||''});}
+  function P(id,label,ans,n1,n2){S.push({id:id,kind:'point',label:label,ans:ans,nudge:n1,nudge2:n2||n1});}
+
+  switch(p.k){
+    case 'pair':
+      t=pairType(p.pair[0],p.pair[1]);
+      C('loc','Step 1 &mdash; Where do they sit?',LOC_OPTS,locOf(p.pair[0],p.pair[1]),
+        'Interior means between the two lines. Exterior means outside them. Check each angle on its own before you decide.',
+        'The interior angles are &ang;3, &ang;4, &ang;5 and &ang;6. Is &ang;'+p.pair[0]+' in that list? Is &ang;'+p.pair[1]+'?');
+      C('side','Step 2 &mdash; Which side of the transversal?',SIDE_OPTS,sideOf(p.pair[0],p.pair[1]),
+        'The transversal is the slanted blue line. Everything sits either to its left or to its right.',
+        'Put a finger on the blue line. Is &ang;'+p.pair[0]+' on its left or its right? Now &ang;'+p.pair[1]+' &mdash; same side, or the other one?');
+      C('name','Step 3 &mdash; Name the pair',NAME_OPTS,t,
+        'You already worked out both facts. The name follows from them &mdash; no new looking required.',
+        'You said '+(locOf(p.pair[0],p.pair[1])==='both_int'?'both interior':(locOf(p.pair[0],p.pair[1])==='both_ext'?'both exterior':'one interior and one exterior'))+', '+(sideOf(p.pair[0],p.pair[1])==='same'?'same side':'opposite sides')+'. Open the angle-pair table &mdash; which row says exactly that?');
+      break;
+
+    case 'angle':
+      t=pairType(p.given[0],p.ask); eight=allEight(p.given[0],p.given[1]);
+      C('name','Step 1 &mdash; Name the pair',NAME_OPTS,t,
+        'Locate each angle first: interior or exterior, then which side of the transversal.',
+        'Where does &ang;'+p.given[0]+' sit, and where does &ang;'+p.ask+' sit? Those two facts name the pair on their own.');
+      C('rule','Step 2 &mdash; Congruent or supplementary?',RULE_OPTS,ruleOf(t),
+        'The pair type decides this, not the picture. Three of the four are congruent.',
+        'You named it '+TYPE_NAME[t].toLowerCase()+'. Is that the one type that sums to 180, or one of the three that are equal?');
+      N('ans','Step 3 &mdash; Find m&ang;'+p.ask,fr(eight[p.ask]),
+        ruleOf(t)==='eq'?'Congruent means the two measures are the same number.'
+                        :'Supplementary means the two measures add to 180.',
+        ruleOf(t)==='eq'?'Congruent angles have equal measures. Look at the measure you were given &mdash; what does that force m&ang;'+p.ask+' to be?'
+                        :'You were given '+p.given[1]+'&deg;, and these two add to 180. What is 180 + (&minus;'+p.given[1]+')?','&deg;');
+      break;
+
+    case 'algx': case 'algang':
+      t=pairType(p.pair[0],p.pair[1]); rule=ruleOf(t);
+      e1=p.expr[0]; e2=p.expr[1];
+      x=(rule==='eq')?fr(e2[1]-e1[1],e1[0]-e2[0]):fr(180-e1[1]-e2[1],e1[0]+e2[0]);
+      v1=e1[0]*x.n/x.d+e1[1]; eight=allEight(p.pair[0],v1);
+      C('name','Step 1 &mdash; Name the pair',NAME_OPTS,t,
+        'Locate both angles before you name anything: interior or exterior, then which side.',
+        'Where does &ang;'+p.pair[0]+' sit, and where does &ang;'+p.pair[1]+' sit? Match those two facts to a row of the table.');
+      C('rule','Step 2 &mdash; Which equation do you write?',RULE_OPTS,rule,
+        'The pair type decides this, not the expressions. Only same-side interior sums to 180.',
+        'You named it '+TYPE_NAME[t].toLowerCase()+'. Does that make the two expressions equal to each other, or add to 180?');
+      N('x','Step 3 &mdash; Solve for x',x,
+        rule==='eq'?'Set the two expressions equal, then collect the x terms on one side.'
+                   :'Add the two expressions, set the total to 180, then collect the x terms.',
+        rule==='eq'?'Write '+exprStr(e1).replace(/&deg;/,'')+' = '+exprStr(e2).replace(/&deg;/,'')+'. Add the additive inverse of '+e2[0]+'x to both sides. What is left?'
+                   :'Write '+exprStr(e1).replace(/&deg;/,'')+' + '+exprStr(e2).replace(/&deg;/,'')+' = 180. Combine the x terms and the constants. What is the x-coefficient?');
+      if(p.k==='algang'){
+        N('ans','Step 4 &mdash; Find m&ang;'+p.ask,fr(eight[p.ask]),
+          (p.ask===p.pair[0]||p.ask===p.pair[1])
+            ? 'Substitute your x back into the expression for &ang;'+p.ask+'.'
+            : '&ang;'+p.ask+' is not labelled, so find a labelled angle first and then relate to it.',
+          (p.ask===p.pair[0]||p.ask===p.pair[1])
+            ? 'You have x = '+fstr(x)+'. Put it into '+exprStr(p.ask===p.pair[0]?e1:e2).replace(/&deg;/,'')+'. What comes out?'
+            : 'Substituting gives m&ang;'+p.pair[0]+' = '+v1+'&deg;. &ang;'+p.pair[0]+' and &ang;'+p.ask+' are '+relate(p.pair[0],p.ask).name+' &mdash; so are they equal, or do they add to 180?','&deg;');
+      }
+      break;
+
+    case 'slope2':
+      dy=p.q[1]-p.p[1]; dx=p.q[0]-p.p[0];
+      N('dy','Step 1 &mdash; Change in y',fr(dy),
+        'The y-values are the second number in each point. Second one first, then add the additive inverse of the first.',
+        diffAsk(p.q[1],p.p[1],'y'));
+      N('dx','Step 2 &mdash; Change in x',fr(dx),
+        'Same move, now with the first number in each point. Keep the points in the order you just used.',
+        diffAsk(p.q[0],p.p[0],'x'));
+      N('m','Step 3 &mdash; The slope, simplified',slopeOf(p.p,p.q),
+        'Change in y on top, change in x on the bottom, then reduce. A fraction like &minus;3/4 is fine.',
+        'You have '+neg(dy)+' over '+neg(dx)+'. What does that reduce to?');
+      break;
+
+    case 'sltype':
+      m=slopeOf(p.p,p.q);
+      N('dx','Step 1 &mdash; Change in x',fr(p.q[0]-p.p[0]),
+        'Second x plus the additive inverse of the first. Look closely at what this one comes out to.',
+        diffAsk(p.q[0],p.p[0],'x'));
+      C('kind','Step 2 &mdash; What kind of slope?',SLT_OPTS,
+        (m===null?'undef':(m.n===0?'zero':(m.n>0?'pos':'neg'))),
+        'A run of 0 puts a 0 on the bottom of the fraction. A rise of 0 puts it on top. Only one of those is a number.',
+        'You found the change in x. That number goes on the BOTTOM. Is there a number you can multiply it by to get 1?');
+      break;
+
+    case 'readmb':
+      N('m','Step 1 &mdash; What is m?',fr(p.m[0],p.m[1]),
+        'The slope is whatever is multiplying x, sign included. First check the equation is solved for y.',
+        'Find the term that has an x in it. What number is stuck to that x, and is it positive or negative?');
+      N('b','Step 2 &mdash; What is b?',fr(p.b[0],p.b[1]),
+        'The y-intercept is the lone constant &mdash; the term with no x on it.',
+        'Cover up the x term with your finger. What number is left?');
+      break;
+
+    case 'step':
+      m=fr(p.m[0],p.m[1]); land=[p.start[0]+m.d,p.start[1]+m.n];
+      N('rise','Step 1 &mdash; The rise',fr(m.n),
+        'The top of the slope fraction. The sign lives here, never on the run.',
+        'The slope is written as one number over another. What is the top number, sign included?');
+      N('run','Step 2 &mdash; The run',fr(m.d),
+        'The bottom of the slope fraction. You always run to the right, so this stays positive.',
+        'What is the bottom number of the slope fraction?');
+      P('ans','Step 3 &mdash; Where do you land?',land,
+        'Add the run to the x-value of your starting point, and the rise to the y-value.',
+        'Starting from '+pt(p.start)+': what is '+p.start[0]+' + '+m.d+', and what is '+neg(p.start[1])+' + '+neg(m.n)+'?');
+      break;
+
+    case 'missing':
+      m=fr(p.m[0],p.m[1]); run=p.qx-p.p[0]; rise=fmul(m,fr(run));
+      yv=fadd(rise,fr(p.p[1]));
+      N('run','Step 1 &mdash; The run between the two points',fr(run),
+        'Only the x-values matter here. Second x plus the additive inverse of the first.',
+        diffAsk(p.qx,p.p[0],'x'));
+      N('rise','Step 2 &mdash; The rise that goes with it',rise,
+        'Slope is rise over run. If you know the slope and the run, the rise is the slope multiplied by the run.',
+        'What is '+ftex(m)+' multiplied by '+neg(run)+'?');
+      N('ans','Step 3 &mdash; Find '+p.letter,yv,
+        'The rise tells you how far the y-value moved. Start from the y-value you were given.',
+        'You started at y = '+neg(p.p[1])+' and rose by '+ftex(rise)+'. Where does that put you?');
+      break;
+
+    case 'ptmb':
+      m=fr(p.m[0],p.m[1]); b=bOf(m,p.p);
+      C('shift','Step 1 &mdash; What does the left side become?',
+        [{v:'plus',t:'y + '+Math.abs(p.p[1])},{v:'minus',t:'y &minus; '+Math.abs(p.p[1])}],
+        (p.p[1]<0?'plus':'minus'),
+        'The form already has a minus in it: y &minus; y&#8321;. Substitute y&#8321; exactly as it is, then simplify.',
+        'Here y&#8321; = '+neg(p.p[1])+', so you are writing y &minus; ('+neg(p.p[1])+'). '+(p.p[1]<0?'Two minus signs are sitting next to each other &mdash; what do they make?':'Nothing to simplify &mdash; so what does it stay as?'));
+      N('b','Step 2 &mdash; Find b',b,
+        'Put the point into y = mx + b. Everything except b is known, so work back to it.',
+        'You have '+neg(p.p[1])+' = '+ftex(m)+' &times; '+neg(p.p[0])+' + b. What must b be?');
+      break;
+
+    case 'twomb':
+      m=slopeOf(p.p,p.q); b=bOf(m,p.p);
+      N('m','Step 1 &mdash; Find the slope',m,
+        'Two points, so slope comes first. Change in y on top, both points in the same order.',
+        'What is '+neg(p.q[1])+' + '+ainv(p.p[1])+', over '+neg(p.q[0])+' + '+ainv(p.p[0])+'?');
+      N('b','Step 2 &mdash; Find b',b,
+        'Use either point &mdash; both give the same b. Put one into y = mx + b and work back.',
+        'Using '+pt(p.p)+': '+neg(p.p[1])+' = '+ftex(m)+' &times; '+neg(p.p[0])+' + b. What must b be?');
+      break;
+
+    case 'convert':
+      m=fr(p.m[0],p.m[1]); b=bOf(m,p.p);
+      N('dist','Step 1 &mdash; Distribute the slope',fneg(fmul(m,fr(p.p[0]))),
+        'Multiply the slope through the bracket. You want the constant it produces, not the x term.',
+        'What is '+ftex(m)+' multiplied by '+neg(-p.p[0])+'?');
+      N('b','Step 2 &mdash; Find b',b,
+        'Now move the constant from the left side across to join the one you just found.',
+        'You have y '+(p.p[1]>0?'&minus; '+p.p[1]:'+ '+Math.abs(p.p[1]))+' = '+ftex(m)+'x'+signed(fneg(fmul(m,fr(p.p[0]))))+'. Move the left constant across &mdash; what is the new constant?');
+      break;
+  }
+  return S;
+}
+
+function qText(p){
+  var e;
+  switch(p.k){
+    case 'pair':return 'Name the pair type for &ang;'+p.pair[0]+' and &ang;'+p.pair[1]+'.';
+    case 'angle':return '&#8467; &#8741; m, and m&ang;'+p.given[0]+' = '+p.given[1]+'&deg;. Find m&ang;'+p.ask+'.';
+    case 'algx':return '&#8467; &#8741; m, m&ang;'+p.pair[0]+' = <span class="mono">'+exprStr(p.expr[0])+'</span> and m&ang;'+p.pair[1]+' = <span class="mono">'+exprStr(p.expr[1])+'</span>. Find <em>x</em>.';
+    case 'algang':return '&#8467; &#8741; m, m&ang;'+p.pair[0]+' = <span class="mono">'+exprStr(p.expr[0])+'</span> and m&ang;'+p.pair[1]+' = <span class="mono">'+exprStr(p.expr[1])+'</span>. Find m&ang;'+p.ask+'.';
+    case 'slope2':return 'Find the slope of the line through '+pt(p.p)+' and '+pt(p.q)+'.';
+    case 'sltype':return 'A line passes through '+pt(p.p)+' and '+pt(p.q)+'. What kind of slope does it have?';
+    case 'readmb':return 'For <span class="mono">'+p.form+'</span>, state <em>m</em> and <em>b</em>.';
+    case 'step':return 'Start at '+pt(p.start)+' with <span class="mono">m = '+ftex(fr(p.m[0],p.m[1]))+'</span>. What point do you land on after one rise-and-run step?';
+    case 'missing':return 'The line through '+pt(p.p)+' and (<span class="mono">'+neg(p.qx)+'</span>, <em>'+p.letter+'</em>) has slope <span class="mono">'+ftex(fr(p.m[0],p.m[1]))+'</span>. Find <em>'+p.letter+'</em>.';
+    case 'ptmb':return 'Write <span class="mono">y = mx + b</span> for the line through '+pt(p.p)+' with <span class="mono">m = '+ftex(fr(p.m[0],p.m[1]))+'</span>.';
+    case 'twomb':return 'Write <span class="mono">y = mx + b</span> for the line through '+pt(p.p)+' and '+pt(p.q)+'.';
+    case 'convert':
+      e='y '+(p.p[1]>0?'&minus; '+p.p[1]:'+ '+Math.abs(p.p[1]))+' = '+ftex(fr(p.m[0],p.m[1]))+'(x '+(p.p[0]>0?'&minus; '+p.p[0]:'+ '+Math.abs(p.p[0]))+')';
+      return 'Convert <span class="mono">'+e+'</span> to slope-intercept form.';
+  }
+}
+function qFigure(p){
+  if(p.k==='pair')return figure(p.pair,null);
+  if(p.k==='angle')return figure([p.given[0],p.ask],null);
+  if(p.k==='algx'||p.k==='algang'){
+    var L={};L[p.pair[0]]=exprStr(p.expr[0]);L[p.pair[1]]=exprStr(p.expr[1]);
+    return figure(p.k==='algang'?[p.ask]:[],L);
+  }
+  return null;
+}
+function finalLine(p){
+  var s=steps(p),m,b;
+  if(p.k==='ptmb'||p.k==='twomb'||p.k==='convert'){
+    m=(p.k==='twomb')?slopeOf(p.p,p.q):fr(p.m[0],p.m[1]);
+    b=bOf(m,p.p);
+    return 'y = '+ftex(m)+'x'+signed(b);
+  }
+  return null;
+}
+
+/* ---------- parsing ---------- */
+function parseFrac(raw){
+  if(raw==null)return null;
+  var s=String(raw).trim().replace(/\u2212/g,'-').replace(/\s+/g,'');
+  if(s==='')return null;
+  var m=s.match(/^(-?\d+)\/(-?\d+)$/);
+  if(m){var d=parseInt(m[2],10);if(d===0)return null;return fr(parseInt(m[1],10),d);}
+  if(/^-?\d+$/.test(s))return fr(parseInt(s,10));
+  if(/^-?\d*\.\d+$/.test(s)){var v=parseFloat(s),den=1;
+    while(Math.abs(v*den-Math.round(v*den))>1e-9&&den<100000)den*=10;
+    return fr(Math.round(v*den),den);}
+  return null;
+}
+function parsePoint(raw){
+  if(raw==null)return null;
+  var s=String(raw).trim().replace(/\u2212/g,'-').replace(/[()\s]/g,'').split(',');
+  if(s.length!==2)return null;
+  var a=parseFrac(s[0]),b=parseFrac(s[1]);
+  if(!a||!b||a.d!==1||b.d!==1)return null;
+  return [a.n,b.n];
+}
+
+/* ---------- diagnostics ---------- */
+function diag(p,st,step,guess){
+  var S=steps(p),all=solveAll(p);
+  if(step.kind==='choice'){
+    if(step.id==='name'){
+      var l=locOf(p.pair?p.pair[0]:p.given[0],p.pair?p.pair[1]:p.ask);
+      if(l==='mixed')return 'One of these is interior and one is exterior. Only one pair type does that.';
+      if(l==='both_int')return 'Both are between the lines, so the name has to contain &ldquo;interior&rdquo;.';
+      return 'Both are outside the lines, so the name has to contain &ldquo;exterior&rdquo;.';
+    }
+    if(step.id==='rule')return guess==='supp'
+      ? 'Only same-side interior sums to 180. These are not that pair.'
+      : 'These are same-side interior &mdash; the one pair type that is supplementary.';
+    if(step.id==='kind')return guess==='zero'
+      ? 'Close, but the other one. The 0 here is on the bottom, and 0 has no multiplicative inverse.'
+      : 'Look again at the change in x you just found.';
+    if(step.id==='shift')return 'The form already has a minus in it. Substituting a negative y-value gives two minus signs together.';
+    if(step.id==='loc')return 'Interior angles are &ang;3, &ang;4, &ang;5 and &ang;6. Check each one separately.';
+    return 'Not that one.';
+  }
+  var g=parseFrac(st.val),a=step.ans;
+  if(!g)return null;
+  if(step.id==='m'&&a&&a.n!==0&&feq(g,fr(a.d,a.n)))return 'You have run over rise. The change in y goes on top.';
+  if(a&&feq(g,fneg(a)))return 'Right size, wrong sign. Check the order of your points, or which part the negative belongs to.';
+  if(step.id==='b'&&p.p&&feq(g,fr(p.p[1])))return 'That is the y-value of the point, not the y-intercept. They only match when the x-value is 0.';
+  if(step.id==='ans'&&all.labelled!==undefined&&feq(g,fr(all.labelled)))return 'That is the angle that was labelled, not the one you were asked for.';
+  return null;
+}
+function solveAll(p){
+  var out={};
+  if(p.k==='algang'||p.k==='algx'){
+    var t=pairType(p.pair[0],p.pair[1]),rule=ruleOf(t),e1=p.expr[0],e2=p.expr[1];
+    var x=(rule==='eq')?fr(e2[1]-e1[1],e1[0]-e2[0]):fr(180-e1[1]-e2[1],e1[0]+e2[0]);
+    out.labelled=e1[0]*x.n/x.d+e1[1];
+  }
+  return out;
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var ST={},tab='d1',idx=0,tool=null,started=false,pick={d1:true,d2:true,d3:true,mx:true};
+var LEVEL={choice:2,num:3,point:3};       /* tries before "Open this step" */
+PROBS.forEach(function(p){
+  ST[p.id]={done:{},pick:{},val:{},tries:{},fb:'',nudgeLv:0,cur:0,helped:false,solved:false};
+});
+function inSec(id){return PROBS.filter(function(p){return p.s===id;});}
+function activeSecs(){return SECTIONS.filter(function(s){return pick[s.id];});}
+function poolSize(){return PROBS.filter(function(p){return pick[p.s];}).length;}
+function say(msg){var l=document.getElementById('live');if(l)l.textContent=msg;}
+
+/* ---------- actions ---------- */
+function check(p,focusBack){
+  var st=ST[p.id],S=steps(p),step=S[st.cur];
+  if(!step)return;
+  var good=false,g;
+  if(step.kind==='choice'){
+    if(st.pick[step.id]===undefined){st.fb='Choose one of the options first.';repaint(p);say('Choose an option first.');return;}
+    good=(st.pick[step.id]===step.ans);g=st.pick[step.id];
+  }else if(step.kind==='point'){
+    var pp=parsePoint(st.val[step.id]);
+    if(!pp){st.fb='Enter a point as two whole numbers, like 3, 5.';repaint(p,'in');say(st.fb);return;}
+    good=(pp[0]===step.ans[0]&&pp[1]===step.ans[1]);
+  }else{
+    g=parseFrac(st.val[step.id]);
+    if(!g){st.fb='Enter a number. A fraction such as -3/4 works too.';repaint(p,'in');say(st.fb);return;}
+    good=feq(g,step.ans);
+  }
+  if(good){
+    st.done[step.id]=true;st.fb='';st.nudgeLv=0;st.cur++;
+    if(st.cur>=S.length){
+      st.solved=true;
+      say(p.num+' solved.');
+      render();
+      var nb=document.getElementById('next');
+      if(nb&&!nb.disabled)nb.focus({preventScroll:true});
+      return;
+    }
+    say('Correct. '+stripTags(S[st.cur].label)+' is now open.');
+    repaint(p,'in');
+  }else{
+    st.tries[step.id]=(st.tries[step.id]||0)+1;
+    var d=diag(p,{val:st.val[step.id]},step,g);
+    st.fb=d||'Not yet. Work it through on your whiteboard and try again.';
+    say('Not correct. '+stripTags(st.fb));
+    repaint(p,'in');
+  }
+}
+function openStep(p){
+  var st=ST[p.id],S=steps(p),step=S[st.cur];
+  st.done[step.id]=true;st.helped=true;st.fb='';st.nudgeLv=0;
+  if(step.kind==='choice')st.pick[step.id]=step.ans;
+  else if(step.kind==='point')st.val[step.id]=step.ans.join(', ');
+  else st.val[step.id]=fstr(step.ans);
+  st.cur++;
+  if(st.cur>=S.length)st.solved=true;
+  say('Step opened. '+(st.solved?p.num+' complete.':stripTags(S[st.cur].label)+' is now open.'));
+  repaint(p,st.solved?null:'in');renderChrome();
+}
+function nudge(p){
+  var st=ST[p.id];
+  st.nudgeLv=Math.min(st.nudgeLv+1,2);
+  var S=steps(p),step=S[st.cur];
+  say('Nudge '+st.nudgeLv+' of 2. '+stripTags(st.nudgeLv===1?step.nudge:step.nudge2));
+  repaint(p,'nudge');
+}
+function nextUnsolved(p){
+  var list=inSec(p.s),i=list.indexOf(p);
+  for(var k=i+1;k<list.length;k++)if(!ST[list[k].id].solved)return list[k];
+  return null;
+}
+function stripTags(s){return String(s).replace(/<[^>]+>/g,'').replace(/&ang;/g,'angle ').replace(/&minus;/g,'-').replace(/&deg;/g,' degrees').replace(/&mdash;/g,'-').replace(/&#47;/g,'/').replace(/&[a-z#0-9]+;/g,' ');}
+
+/* ---------- render: one card at a time, so focus and scroll survive ---------- */
+function esc(s){return String(s==null?'':s).replace(/&(?!#?\w+;)/g,'&amp;').replace(/"/g,'&quot;');}
+
+function stepHtml(p,step,idx){
+  var st=ST[p.id],done=!!st.done[step.id];
+  if(idx>st.cur)return '';
+  var eid=p.id+'-'+step.id;
+  var h='<div class="step"><div class="slabel" id="'+eid+'-lab">'+step.label+'</div>';
+  if(done){
+    var shown;
+    if(step.kind==='choice'){shown='';step.opts.forEach(function(o){if(o.v===st.pick[step.id])shown=o.t;});}
+    else if(step.kind==='point'){shown='('+step.ans.join(', ')+')';}
+    else{shown=ftex(step.ans)+(step.unit||'');}
+    h+='<div class="locked-in"><span class="tick" aria-hidden="true">&#10003;</span><span class="sr">Answered: </span>'+shown+'</div>';
+  }else{
+    var dis='';
+    if(step.kind==='choice'){
+      h+='<div class="opts" role="group" aria-labelledby="'+eid+'-lab">';
+      step.opts.forEach(function(o){
+        h+='<button type="button" class="opt" data-pick="'+o.v+'" aria-pressed="'+(st.pick[step.id]===o.v?'true':'false')+'"'+dis+'>'+o.t+'</button>';
+      });
+      h+='</div>';
+    }else{
+      var invalid=st.fb?'true':'false';
+      h+='<div class="fields"><div class="fld">'
+       + '<label class="sr" for="'+eid+'">'+stripTags(step.label)+'</label>'
+       + '<input type="text" id="'+eid+'" data-in="'+step.id+'" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false"'
+       + ' value="'+esc(st.val[step.id]||'')+'" placeholder="'+(step.kind==='point'?'x, y':'number or fraction')+'"'
+       + ' aria-invalid="'+invalid+'" aria-describedby="'+eid+'-help'+(st.fb?' '+eid+'-err':'')+'"'+dis+'>'
+       + '</div>';
+      if(step.unit)h+='<span class="fld"><span aria-hidden="true">'+step.unit+'</span></span>';
+      h+='</div><div class="sr" id="'+eid+'-help">Type a whole number, a decimal, or a fraction such as -3/4.</div>';
+    }
+    {
+      h+='<div class="row"><button type="button" class="btn btn-primary" data-act="check">Check</button>'
+       + '<button type="button" class="btn btn-nudge" data-act="nudge">'+(st.nudgeLv===0?'Nudge':(st.nudgeLv===1?'Another nudge':'Nudge 2 of 2'))+'</button>';
+      if((st.tries[step.id]||0)>=LEVEL[step.kind])h+='<button type="button" class="btn btn-open" data-act="open">Open this step</button>';
+      h+='</div>';
+      if(st.nudgeLv>0)h+='<div class="fb nudge"><strong>Nudge '+st.nudgeLv+' of 2 &mdash;</strong> '+(st.nudgeLv===1?step.nudge:step.nudge2)+'</div>';
+      if(st.fb)h+='<div class="fb err" id="'+eid+'-err">'+st.fb+'</div>';
+    }
+  }
+  return h+'</div>';
+}
+
+function cardHtml(p){
+  var st=ST[p.id],S=steps(p);
+  var h='<div class="qtop"><span class="qn">'+p.num+'</span>';
+  if(p.cx===2)h+='<span class="qtag cx">complex</span>';
+  else if(p.cx===0)h+='<span class="qtag">essential</span>';
+  if(!st.solved)h+='<span class="qtag">step '+(st.cur+1)+' of '+S.length+'</span>';
+  h+='</div><div class="qtext">'+qText(p)+'</div>';
+  var f=qFigure(p);
+  if(f)h+='<div class="fig">'+f+'</div>';
+  if(!st.solved){S.forEach(function(s,i){h+=stepHtml(p,s,i);});}
+  else{
+    var fl=finalLine(p);
+    h+='<div class="fb ok">&#10003; '+(st.helped?'Done, with a step opened.':'Solved.')+(fl?' &nbsp; <span class="mono">'+fl+'</span>':'')+'</div>';
+  }
+  return h;
+}
+
+function wire(el,p){
+  var st=ST[p.id],S=steps(p);
+  el.querySelectorAll('[data-pick]:not([disabled])').forEach(function(b){
+    b.addEventListener('click',function(){
+      st.pick[S[st.cur].id]=b.getAttribute('data-pick');st.fb='';repaint(p,'pick:'+b.getAttribute('data-pick'));
+    });
+  });
+  el.querySelectorAll('input[data-in]:not([disabled])').forEach(function(i){
+    var k=i.getAttribute('data-in');
+    i.addEventListener('input',function(){st.val[k]=i.value;});
+    i.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();check(p);}});
+  });
+  var c=el.querySelector('[data-act="check"]');if(c)c.addEventListener('click',function(){check(p);});
+  var n=el.querySelector('[data-act="nudge"]');if(n)n.addEventListener('click',function(){nudge(p);});
+  var o=el.querySelector('[data-act="open"]');if(o)o.addEventListener('click',function(){openStep(p);});
+}
+
+/* focusHint: 'in' = the live control, 'nudge' = the nudge button, 'pick:v' = that option */
+function repaint(p,focusHint){
+  var el=document.getElementById('card-'+p.id);
+  if(!el){render();return;}
+  var st=ST[p.id];
+  el.className='q'+(st.solved?(st.helped?' helped':' solved'):'');
+  el.innerHTML=cardHtml(p);
+  wire(el,p);
+  if(st.solved){render();return;}
+  if(focusHint&&!st.solved){
+    var t=null;
+    if(focusHint.indexOf('pick:')===0)t=el.querySelector('[data-pick="'+focusHint.slice(5)+'"]');
+    else if(focusHint==='nudge')t=el.querySelector('[data-act="nudge"]');
+    else t=el.querySelector('input[data-in]:not([disabled])')||el.querySelector('[data-pick]:not([disabled])');
+    if(t)t.focus({preventScroll:true});
+  }
+  renderChrome();
+}
+function focusFirst(p){
+  var el=document.getElementById('card-'+p.id);if(!el)return;
+  var t=el.querySelector('input[data-in]:not([disabled])')||el.querySelector('[data-pick]:not([disabled])');
+  if(t)t.focus({preventScroll:false});
+}
+
+function renderChrome(){
+  var t=document.getElementById('tabs');t.innerHTML='';
+  if(!started)return;
+  activeSecs().forEach(function(s){
+    var list=inSec(s.id),d=list.filter(function(x){return ST[x.id].solved;}).length;
+    var b=document.createElement('button');
+    b.type='button';b.className='tab'+(tab===s.id?' on':'');
+    b.setAttribute('aria-current',tab===s.id?'true':'false');
+    b.innerHTML=s.label+'<span class="n">'+d+'/'+list.length+'</span>';
+    b.addEventListener('click',function(){tab=s.id;idx=firstUnsolvedIdx();render();
+      say(s.title+'. Problem '+(idx+1)+' of '+inSec(s.id).length+'.');
+      window.scrollTo({top:0,behavior:'smooth'});});
+    t.appendChild(b);
+  });
+  var ps=document.getElementById('pills');ps.innerHTML='';
+  inSec(tab).forEach(function(p,i){
+    var s2=ST[p.id];
+    var pb=document.createElement('button');
+    pb.type='button';
+    pb.className='pill'+(s2.solved?(s2.helped?' helped':' done'):'');
+    pb.setAttribute('aria-current',i===idx?'true':'false');
+    pb.setAttribute('aria-label',p.num+(s2.solved?', solved':', not yet answered'));
+    pb.textContent=p.num;
+    pb.addEventListener('click',function(){go(i);});
+    ps.appendChild(pb);
+  });
+  var scope=PROBS.filter(function(p){return pick[p.s];});
+  var own=scope.filter(function(p){return ST[p.id].solved&&!ST[p.id].helped;}).length;
+  var hp=scope.filter(function(p){return ST[p.id].solved&&ST[p.id].helped;}).length;
+  document.getElementById('counts').innerHTML=
+    'on your own <b>'+own+'</b> &nbsp; with a step opened <b>'+hp+'</b> &nbsp; of '+scope.length;
+  document.getElementById('pbar').style.width=(scope.length?((own+hp)/scope.length*100):0)+'%';
+}
+
+/* ---------- toolbelt ---------- */
+var TOOLS=[
+  {id:'calc',label:'Calculator'},
+  {id:'angles',label:'Angle pairs'},
+  {id:'slope',label:'Slope'},
+  {id:'forms',label:'Equation forms'}
+];
+function renderBelt(){
+  var bar=document.getElementById('beltbar');bar.innerHTML='<span class="lbl">Toolbelt</span>';
+  TOOLS.forEach(function(t){
+    var b=document.createElement('button');
+    b.type='button';b.className='tbtn'+(tool===t.id?' on':'');
+    b.setAttribute('aria-expanded',tool===t.id?'true':'false');
+    b.setAttribute('aria-controls','beltpanel');
+    b.textContent=t.label;
+    b.addEventListener('click',function(){
+      var opening=(tool!==t.id);
+      tool=opening?t.id:null;renderBelt();
+      if(opening){var pn=document.getElementById('beltinner');pn.setAttribute('tabindex','-1');pn.focus({preventScroll:true});}
+    });
+    bar.appendChild(b);
+  });
+  var panel=document.getElementById('beltpanel'),inner=document.getElementById('beltinner');
+  var main=document.querySelector('.main');
+  if(!tool){panel.style.display='none';if(main)main.style.paddingBottom='90px';return;}
+  panel.style.display='block';
+  inner.innerHTML=toolHtml(tool);
+  if(tool==='calc')wireCalc();
+  /* the belt is fixed; give the page room rather than letting it cover the work */
+  if(main)main.style.paddingBottom=Math.max(document.querySelector('.belt').offsetHeight+24,140)+'px';
+}
+function toolHtml(id){
+  if(id==='angles'){
+    return '<h3>Angle pairs &mdash; where they sit</h3>'
+     + '<div class="fig">'+figure([],null,250)+'</div>'
+     + '<table><tr><th>Pair</th><th>Where</th><th>When &#8467; &#8741; m</th></tr>'
+     + '<tr><td>Corresponding</td><td>Same side of the transversal, matching positions</td><td>congruent</td></tr>'
+     + '<tr><td>Alternate interior</td><td>Between the lines, opposite sides</td><td>congruent</td></tr>'
+     + '<tr><td>Alternate exterior</td><td>Outside the lines, opposite sides</td><td>congruent</td></tr>'
+     + '<tr><td>Same-side interior</td><td>Between the lines, same side</td><td>supplementary</td></tr></table>'
+     + '<p>Vertical angles and linear pairs come from one intersection, so they hold whether or not the lines are parallel.</p>'
+     + '<p>Shortcut once you have any one angle: odd-numbered angles are congruent to each other, even-numbered angles are congruent to each other, and any odd plus any even is 180.</p>';
+  }
+  if(id==='slope'){
+    return '<h3>Slope</h3>'
+     + '<p><span class="mono">m = (y&#8322; &minus; y&#8321;) &#47; (x&#8322; &minus; x&#8321;)</span> &mdash; change in y on top. Keep both points in the same order.</p>'
+     + '<table><tr><th>Slope</th><th>The line</th><th>Why</th></tr>'
+     + '<tr><td>Positive</td><td>climbs left to right</td><td>rise and run agree</td></tr>'
+     + '<tr><td>Negative</td><td>falls left to right</td><td>they disagree; the sign goes on the rise</td></tr>'
+     + '<tr><td>Zero</td><td>flat</td><td>rise is 0, and 0 over any run is 0</td></tr>'
+     + '<tr><td>Undefined</td><td>vertical</td><td>run is 0, and 0 has no multiplicative inverse</td></tr></table>'
+     + '<p>For <span class="mono">m = &minus;3&#47;4</span>: down 3, right 4. Down 3 <em>and</em> left 4 is a different line.</p>'
+     + '<p>A whole number is already a fraction: <span class="mono">2 = 2&#47;1</span>.</p>';
+  }
+  if(id==='forms'){
+    return '<h3>Equation forms</h3>'
+     + '<table><tr><th>Form</th><th>Looks like</th><th>Use it when</th></tr>'
+     + '<tr><td>Slope-intercept</td><td class="mono">y = mx + b</td><td>you have the slope and the y-intercept</td></tr>'
+     + '<tr><td>Point-slope</td><td class="mono">y &minus; y&#8321; = m(x &minus; x&#8321;)</td><td>you have the slope and any one point</td></tr>'
+     + '<tr><td>Two points</td><td>&mdash;</td><td>find m first, then point-slope with either point</td></tr></table>'
+     + '<p>Negative coordinates: <span class="mono">y&#8321; = &minus;5</span> gives <span class="mono">y &minus; (&minus;5) = y + 5</span>. Substitute exactly, then simplify.</p>'
+     + '<p>Check any finished equation by putting a given point back in.</p>';
+  }
+  return '<div class="calc">'
+   + '<div class="calcout"><div class="calcexp" id="cexp">&nbsp;</div>'
+   + '<div class="calcval" id="cval">0</div><div class="calcfrac" id="cfrac">&nbsp;</div></div>'
+   + '<div class="keys">'
+   + key('C','clr')+key('&plusmn;','op','~')+key('&#47;','op','/')+key('&times;','op','*')
+   + key('7')+key('8')+key('9')+key('&minus;','op','-')
+   + key('4')+key('5')+key('6')+key('+','op','+')
+   + key('1')+key('2')+key('3')+'<button class="key eq" data-k="=" style="grid-row:span 2">=</button>'
+   + key('0')+key('.')+key('&larr;','op','<')
+   + '</div>'
+   + '<div class="calcnote">Arithmetic only &mdash; it will not graph a line or solve for you. Exact fractions show under the answer.</div></div>';
+}
+function key(lab,cls,k){return '<button class="key '+(cls||'')+'" data-k="'+(k||lab)+'">'+lab+'</button>';}
+
+/* ---------- calculator: exact rational arithmetic, no graphing ---------- */
+var CA={acc:null,op:null,cur:'0',fresh:true};
+function calcVal(){return parseFrac(CA.cur)||fr(0);}
+function calcApply(){
+  var b=calcVal();
+  if(CA.acc===null||CA.op===null){CA.acc=b;return;}
+  var a=CA.acc;
+  if(CA.op==='+')CA.acc=fadd(a,b);
+  else if(CA.op==='-')CA.acc=fadd(a,fneg(b));
+  else if(CA.op==='*')CA.acc=fmul(a,b);
+  else if(CA.op==='/'){ if(b.n===0){CA.acc=null;CA.cur='0 has no inverse';CA.fresh=true;return;} CA.acc=fmul(a,fr(b.d,b.n)); }
+}
+function calcKey(k){
+  if(k==='C'){CA={acc:null,op:null,cur:'0',fresh:true};}
+  else if(k==='<'){CA.cur=(CA.cur.length>1?CA.cur.slice(0,-1):'0');}
+  else if(k==='~'){CA.cur=(CA.cur.charAt(0)==='-'?CA.cur.slice(1):'-'+CA.cur);}
+  else if('0123456789.'.indexOf(k)>=0&&k.length===1){
+    if(CA.fresh){CA.cur=(k==='.'?'0.':k);CA.fresh=false;}
+    else if(k==='.'&&CA.cur.indexOf('.')>=0){/* ignore */}
+    else CA.cur=(CA.cur==='0'&&k!=='.')?k:CA.cur+k;
+  }
+  else if('+-*/'.indexOf(k)>=0){calcApply();CA.op=k;CA.fresh=true;CA.cur=fstr(CA.acc||fr(0));}
+  else if(k==='='){calcApply();CA.op=null;CA.cur=CA.acc?fstr(CA.acc):CA.cur;CA.acc=null;CA.fresh=true;}
+  paintCalc();
+}
+function paintCalc(){
+  var v=document.getElementById('cval');if(!v)return;
+  v.textContent=CA.cur.replace('-','\u2212');
+  var f=parseFrac(CA.cur);
+  document.getElementById('cfrac').innerHTML=(f&&f.d!==1)?('exact: '+ftex(f)+' &nbsp; decimal: '+(f.n/f.d).toFixed(4).replace(/0+$/,'').replace(/\.$/,'').replace('-','\u2212')):'&nbsp;';
+  var ops={'+':'+','-':'\u2212','*':'\u00D7','/':'\u00F7'};
+  document.getElementById('cexp').innerHTML=(CA.acc!==null&&CA.op)?(fstr(CA.acc).replace('-','\u2212')+' '+ops[CA.op]):'&nbsp;';
+}
+function wireCalc(){
+  document.querySelectorAll('.key').forEach(function(b){
+    b.addEventListener('click',function(){calcKey(b.getAttribute('data-k'));});
+  });
+  paintCalc();
+}
+
+/* ---------- setup ---------- */
+function renderSetup(){
+  var m=document.getElementById('main');
+  var h='<div class="setup"><h2>What are you practising today?</h2>'
+   + '<p>Pick the days you want. You can change this later without losing what you have done.</p>'
+   + '<div class="grp"><div class="grp-label">Include</div><div class="chips">';
+  SECTIONS.forEach(function(s){
+    var name=(s.id==='mx')?'Mixed Review':(s.label+' &mdash; '+s.title.replace(/&/g,'and'));
+    h+='<button type="button" class="chip" data-sec="'+s.id+'" aria-pressed="'+(pick[s.id]?'true':'false')+'">'
+     + name+'<span class="n">'+inSec(s.id).length+'</span></button>';
+  });
+  h+='</div></div>'
+   + '<div class="setupnote"><strong>Mixed Review</strong> has no day labels on it. Deciding which tool a problem needs is the part the three separate days never make you do, so leave it in if you can.</div>'
+   + '<div class="setupnote">Every problem is broken into steps. The next step opens when the one before it is right. Two levels of nudge are there when you want them, and after a few tries you can open a step and keep moving.</div>'
+   + '<button type="button" class="btn btn-primary" id="go"'+(poolSize()?'':' disabled')+'>Start &mdash; '+poolSize()+' problem'+(poolSize()===1?'':'s')+'</button>'
+   + '</div>';
+  m.innerHTML=h;
+  m.querySelectorAll('[data-sec]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-sec');pick[id]=!pick[id];renderSetup();
+      var again=document.querySelector('[data-sec="'+id+'"]');if(again)again.focus({preventScroll:true});
+    });
+  });
+  var go=document.getElementById('go');
+  if(go)go.addEventListener('click',function(){
+    started=true;
+    var first=activeSecs()[0];if(first)tab=first.id;
+    idx=0;render();say('Started. '+poolSize()+' problems. Problem 1 of '+inSec(tab).length+'.');
+    var h1=document.querySelector('.sec h2');if(h1){h1.setAttribute('tabindex','-1');h1.focus({preventScroll:true});}
+  });
+  renderChrome();
+}
+
+function render(){
+  if(!started){renderSetup();document.getElementById('pills').innerHTML='';return;}
+  if(!pick[tab]){var f0=activeSecs()[0];if(f0)tab=f0.id;else{started=false;renderSetup();return;}}
+  var list=inSec(tab);
+  if(idx>=list.length)idx=list.length-1;
+  if(idx<0)idx=0;
+  renderChrome();
+  var m=document.getElementById('main');m.innerHTML='';
+  var sec=SECTIONS.filter(function(s){return s.id===tab;})[0];
+  var sh=document.createElement('div');sh.className='sec';
+  sh.innerHTML='<h2 tabindex="-1" id="sechead">'+sec.title+'</h2><p>'+sec.blurb+'</p>';
+  m.appendChild(sh);
+  if(list.every(function(x){return ST[x.id].solved;})){
+    var opened=list.filter(function(x){return ST[x.id].helped;}).length;
+    var f2=document.createElement('div');f2.className='done';
+    f2.innerHTML='<h2>Section finished.</h2><p>'+
+      (opened?'You opened a step on '+opened+'. Those are the ones worth a line in your journal.'
+             :'Every step on your own.')+'</p>'+
+      '<div style="margin-top:14px"><button type="button" class="btn btn-primary" id="back">Change what you are practising</button></div>';
+    m.appendChild(f2);
+    document.getElementById('back').addEventListener('click',function(){started=false;render();window.scrollTo({top:0,behavior:'smooth'});});
+    return;
+  }
+  var p=list[idx],st=ST[p.id];
+  var d=document.createElement('div');
+  d.id='card-'+p.id;
+  d.className='q'+(st.solved?(st.helped?' helped':' solved'):'');
+  d.innerHTML=cardHtml(p);
+  m.appendChild(d);wire(d,p);
+  var nav=document.createElement('div');nav.className='qnav';
+  nav.innerHTML='<button type="button" class="btn btn-ghost" id="prev"'+(idx===0?' disabled':'')+'>&larr; Previous</button>'+
+    '<span class="qpos">Problem '+(idx+1)+' of '+list.length+'</span>'+
+    '<button type="button" class="btn btn-ghost" id="next"'+(idx>=list.length-1?' disabled':'')+'>Next &rarr;</button>';
+  m.appendChild(nav);
+  var pv=document.getElementById('prev'),nx=document.getElementById('next');
+  if(pv&&!pv.disabled)pv.addEventListener('click',function(){go(idx-1);});
+  if(nx&&!nx.disabled)nx.addEventListener('click',function(){go(idx+1);});
+}
+
+function go(i){
+  var list=inSec(tab);
+  if(i<0||i>=list.length)return;
+  idx=i;render();
+  var p=list[idx];
+  say('Problem '+(idx+1)+' of '+list.length+'. '+stripTags(qText(p)));
+  var el=document.getElementById('card-'+p.id);
+  var t=el&&(el.querySelector('input[data-in]')||el.querySelector('[data-pick]'));
+  if(t)t.focus({preventScroll:true});
+  else{var hh=document.getElementById('sechead');if(hh)hh.focus({preventScroll:true});}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function firstUnsolvedIdx(){
+  var list=inSec(tab);
+  for(var i=0;i<list.length;i++)if(!ST[list[i].id].solved)return i;
+  return 0;
+}
+
+render();renderBelt();
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&tool){tool=null;renderBelt();}});
+</script>
+</body>
+</html>
